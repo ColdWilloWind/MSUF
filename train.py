@@ -10,7 +10,7 @@ import warnings
 warnings.filterwarnings('ignore')
 import time
 import network
-from dataset import MyDataSet
+from dataset.dataset import MyDataset
 from STN import AffineTransform
 from loss import ComputeLoss
 
@@ -102,14 +102,61 @@ def train():
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    ''''''
+    """ PATH Setting """
+    # train_modal1_folder = 'E://dataset/Optical-Optical/ref'  # Folder path for training image pairs for modal-1 and model-2.
+    # train_modal2_folder = 'E://dataset/Optical-Optical/sen'
+    train_modal1_folder = './data/Optical-Optical/time1'
+    train_modal2_folder = './data/Optical-Optical/time1'
+    # Ensure that the paired images have the same name on both folders, and both folders have same number of images.
+    save_model_folder = './saved/model/'  # Folder path for saved model for modal-1 and model-2.
+    save_loss_folder = './saved/loss_fig/'  # Folder path for saved loss information
+
     data_path = ''
-    batch_size = 2
+    # batch_size = 2
     train_epoch = 340
     start_train_epoch = 0
     loss_info_save_path = ''
-    ''''''
-    dataset = MyDataSet('train', data_path)
+
+    """ Training Setting """
+    learn_rate = 0.0001
+    weight_decay = 1e-4
+    batch_size = 8
+    train_epoch = 100
+    image_size = 512
+    num_sample = 200
+    supervised_criterion = True
+    unsupervised_criterion = True
+    similarity = 'NCC'
+    descriptor = 'defult'
+    mask = True
+    alpha_ = 5  # balance between supervised and unsupervised criterion, which only works on both criterions set True.
+
+    """ DATA Geometric Distortion Setting """
+    # Set the parameter range for simulating geometric distortion.
+    # [a, b, c]: a refers to min, b refers to max, and c refers to interval.
+    range_translation_pixel_x = [-10, 10, 1]
+    range_translation_pixel_y = [-10, 10, 1]
+    range_scale_x = [0.9, 1.1, 0.05]
+    range_scale_y = [0.9, 1.1, 0.05]
+    range_rotate_angle = [-10, 10, 2]
+    range_shear_angle_x = [0, 0, 0]
+    range_shear_angle_y = [0, 0, 0]
+    translation_x_equals_y = False
+    scale_x_equals_y = True
+    shear_x_equals_y = False
+    range_geo_distortion = {
+        'range_translation_pixel_x': range_translation_pixel_x,
+        'range_translation_pixel_y': range_translation_pixel_y,
+        'range_scale_x': range_scale_x,
+        'range_scale_y': range_scale_y,
+        'range_rotate_angle': range_rotate_angle,
+        'range_shear_angle_x': range_shear_angle_x,
+        'range_shear_angle_y': range_shear_angle_y,
+        'translation_x_equals_y': translation_x_equals_y,
+        'scale_x_equals_y': scale_x_equals_y,
+        'shear_x_equals_y': shear_x_equals_y
+    }
+    dataset = MyDataset(train_modal1_folder, train_modal2_folder, range_geo_distortion)
     dataloader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
     total_epoch = len(dataloader)
     model_save_path = os.path.join(data_path, 'train', 'save_model')
