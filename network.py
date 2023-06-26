@@ -7,6 +7,9 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
 class SE(nn.Module):
+    """
+    SE Block in Fig. 3
+    """
     def __init__(self, in_channel, ratio):
         super(SE, self).__init__()
         self.squeeze = nn.AdaptiveAvgPool2d((1, 1))
@@ -22,6 +25,9 @@ class SE(nn.Module):
 
 
 class ConvBlock(nn.Module):
+    """
+    ordinary convolution block (ConvBlock)
+    """
     def __init__(self, in_channel, out_channel, kernel_size, stride, padding):
         super(ConvBlock, self).__init__()
         self.conv2d = nn.Conv2d(in_channels=in_channel, out_channels=out_channel, kernel_size=kernel_size,
@@ -37,6 +43,9 @@ class ConvBlock(nn.Module):
 
 
 class SEBolck(nn.Module):
+    """
+    SE ConvBlock = ordinary ConvBlock plus an SE block structure
+    """
     def __init__(self, in_channel, out_channel, k, s, p, ratio=16):
         super(SEBolck, self).__init__()
         self.conv_block = ConvBlock(in_channel, out_channel, k, s, p)
@@ -50,6 +59,9 @@ class SEBolck(nn.Module):
 
 
 class ResBlock(nn.Module):
+    """
+        DR ConvBlock
+    """
     def __init__(self, in_channel, out_channel, kernel_size, strides, padding):
         super(ResBlock, self).__init__()
         self.strides = strides
@@ -71,6 +83,9 @@ class ResBlock(nn.Module):
 
 
 class ResSEConvBlock(nn.Module):
+    """
+        SE-DR ConvBlock
+    """
     def __init__(self, in_channel, out_channel, k, s, p, ratio=16):
         super(ResSEConvBlock, self).__init__()
         self.conv_block = ResBlock(in_channel, out_channel, k, s, p)
