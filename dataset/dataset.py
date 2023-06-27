@@ -6,14 +6,15 @@ import os
 import glob
 import cv2
 from stn.GeoTransformation import AffineTransformFromRange
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def squeezeCondition(tensor_):
     TS = tensor_.size()
-    if len(TS)==3 and TS[0]==3:
+    if len(TS) == 3 and TS[0] == 3:
         tensor_ = tensor_[0]
-    elif len(TS)==3 and TS[0]==1:
+    elif len(TS) == 3 and TS[0] == 1:
         tensor_ = tensor_.squeeze(0)
     return tensor_
 
@@ -22,7 +23,7 @@ def show_tensor(t, a, b, c):
     t = squeezeCondition(t)
     t = np.array(t.detach().cpu())
     t = t.astype(np.uint8)
-    plt.subplot(a,b,c)
+    plt.subplot(a, b, c)
     plt.imshow(t, cmap='gray')
 
 
@@ -73,10 +74,10 @@ class MyDataset(Dataset):
         tensor2 = tensor2 / 255.
         tensor2_warp = tensor2_warp / 255.
         data = {
-            'tensor1': tensor1,
-            'tensor2': tensor2,
-            'tensor2_warp': tensor2_warp,
-            'trans_matrix': trans_matrix,
-            'inv_trans_matrix': inv_trans_matrix
+            'tensor1': tensor1,  # 参考图片
+            'tensor2': tensor2,  # 待配准原图
+            'tensor2_warp': tensor2_warp,  # 待配准图片
+            'trans_matrix': trans_matrix,  # 变换矩阵
+            'inv_trans_matrix': inv_trans_matrix  # 变换逆矩阵
         }
         return data

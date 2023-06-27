@@ -4,6 +4,7 @@ import CFOG as des
 import torch.nn.functional as F
 import torch.nn as nn
 from torch.autograd import Variable
+from losses.CFOG import calculate_descriptor as des_dp
 
 
 def ComputeLoss(reference, sensed_tran, sensed, reference_inv_tran):
@@ -76,6 +77,8 @@ def CFOG_SSD(i, j):
     j = torch.mul(j, z)
     CFOG_sar = torch.mul(des.CFOG(i), z)
     CFOG_optical = torch.mul(des.CFOG(j), z)
+    CFOG_sar_test = torch.mul(des_dp(i), z)
+    CFOG_optical_test = torch.mul(des_dp(j), z)
     SSD_loss = nn.MSELoss(reduction='sum')
     loss = SSD_loss(CFOG_sar, CFOG_optical)/num
     return loss

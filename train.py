@@ -48,8 +48,10 @@ def train():
         Loss_per_batchsize = []
         time_epoch_start = time.time()
         for i, data in enumerate(dataloader):
-            ref_tensor = data[0]
-            sen_tensor = data[1]
+            # ref_tensor = data[0]
+            # sen_tensor = data[1]
+            ref_tensor = data['tensor1']
+            sen_tensor = data['tensor2_warp']
             "Scale: 1"
             scale_1_optimizer.zero_grad()
             scale_1_affine_parameter = scale1_model(ref_tensor, sen_tensor)
